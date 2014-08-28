@@ -1,0 +1,66 @@
+= Google Identity Toolkit Ruby Client
+
+Google Identity Toolkit (Gitkit) ruby client library is for third party sites to easily integrate with Gitkit service.
+
+=== Installation
+
+  gem install gitkit-ruby-client
+
+=== Examples
+
+  require 'gitkit_client'
+
+  # Create a server config file or download it from Google Developer Console
+  # The config file contains Gitkit library config in json format
+  # {
+  #   "clientId" : "oauth2-web-client-id.apps.googleusercontent.com",
+  #   "serviceAccountEmail" : "service-account-email@developer.gserviceaccount.com",
+  #   "serviceAccountPrivateKeyFile" : "path-to-service-account-private-key-file.p12",
+  #   "widgetUrl" : "full-url-of-gitkit-widget-on-your-site",
+  #   "cookieName" : "gtoken",
+  #   "serverKey" : "devconsole-server-key"
+  # }
+
+  # Create a Gitkit client
+  gitkit_client = GitkitLib::GitkitClient.create_from_config_file 'gitkit-server-config.json'
+
+  # Verify the Gitkit token in the incoming http request
+  token = request.cookies["gtoken"]
+  user = gitkit_client.verify_gitkit_token token
+
+  # Upload passwords
+  def calc_sha1(key, plain_text, salt)
+    hmac = OpenSSL::HMAC.new key, 'sha1'
+    hmac << plain_text
+    hmac << salt
+    hmac.digest
+  end
+
+  hash_key = 'hash-key'
+
+  user1 = GitkitLib::GitkitUser.new
+  user1.email = '1234@example.com'
+  user1.user_id = '1234'
+  user1.salt = 'salt-1'
+  user1.password_hash = calc_sha1(hash_key, '1111', 'salt-1')
+
+  user2 = GitkitLib::GitkitUser.new
+  user2.email = '5678@example.com'
+  user2.user_id = '5678'
+  user2.salt = 'salt-2'
+  user2.password_hash = calc_sha1(hash_key, '5555', 'salt-2')
+  user2.name = '56 78'
+
+  gitkit_client.upload_users 'HMAC_SHA1', hash_key, [user1, user2]
+
+  # Get user by email
+  user = gitkit_client.get_user_by_email('1234@example.com')
+
+  # Get user by id
+  user = gitkit_client.get_user_by_id('5678')
+
+  # Delete a user
+  gitkit_client.delete_user '5678'
+
+  # Download all accounts
+  gitkit_client.get_all_users(2) { |account| pp account}
