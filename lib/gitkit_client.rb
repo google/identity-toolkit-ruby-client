@@ -42,7 +42,7 @@ module GitkitLib
     # @param [String] client_id Google oauth2 web client id of this site
     # @param [String] service_account_email Google service account email
     # @param [String] service_account_key Google service account private p12 key
-    # @param [String] widget_url url to host the Gitkit widget
+    # @param [String] widget_url full url to host the Gitkit widget
     # @param [String] server_api_key server-side Google API key
     def initialize(client_id, service_account_email, service_account_key,
         widget_url, server_api_key = nil)
@@ -147,7 +147,6 @@ module GitkitLib
 
     # Get one-time out-of-band code for ResetPassword/ChangeEmail request
     #
-    # @param [String] full_url the full URL of incoming request
     # @param [Hash{String=>String}] param dict of HTTP POST params
     # @param [String] user_ip end user's IP address
     # @param [String] gitkit_token the gitkit token if user logged in
@@ -158,11 +157,11 @@ module GitkitLib
     #    action: OobAction
     #    response_body: the http body to be returned
     #  }
-    def get_oob_result(full_url, param, user_ip, gitkit_token=nil)
+    def get_oob_result(param, user_ip, gitkit_token=nil)
       if param.has_key? 'action'
         begin
           if param['action'] == 'resetPassword'
-            oob_link = build_oob_link(full_url,
+            oob_link = build_oob_link(
                 password_reset_request(param, user_ip),
                 param['action'])
             return password_reset_response(oob_link, param)
@@ -170,7 +169,7 @@ module GitkitLib
             unless gitkit_token
               return failure_msg('login is required')
             end
-            oob_link = build_oob_link(full_url,
+            oob_link = build_oob_link(
                 change_email_request(param, user_ip, gitkit_token),
                 param['action'])
             return email_change_response(oob_link, param)
@@ -202,11 +201,10 @@ module GitkitLib
       }
     end
 
-    def build_oob_link(full_url, param, mode)
+    def build_oob_link(param, mode)
       code = @rpc_helper.get_oob_code(param)
       if code
-        oob_link = Addressable::URI.parse full_url
-        oob_link.path = @widget_url
+        oob_link = Addressable::URI.parse @widget_url
         oob_link.query_values = { 'mode' => mode, 'oobCode' => code}
         return oob_link.to_s
       end

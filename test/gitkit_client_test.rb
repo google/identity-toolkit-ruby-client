@@ -81,15 +81,14 @@ class GitkitClientTest < Test::Unit::TestCase
         '924226504183.apps.googleusercontent.com',
         'service_email',
         Base64.decode64(TestData::P12_KEY),
-        '/widget',
+        'http://localhost:1234/widget',
         'server-api-key')
     oob_req = {
         'action' => 'resetPassword',
         'email' => 'user@example.com',
         'challenge' => 'what is the number',
         'response' => '100'}
-    oob_result = gitkit_client.get_oob_result('http://localhost:1234/oob',
-        oob_req, '1.1.1.1')
+    oob_result = gitkit_client.get_oob_result(oob_req, '1.1.1.1')
     assert_equal oob_req['email'], oob_result[:email]
     assert_equal :RESET_PASSWORD, oob_result[:action]
     assert_equal(
