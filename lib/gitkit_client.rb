@@ -14,7 +14,7 @@
 
 require 'addressable/uri'
 require 'jwt'
-require 'json'
+require 'multi_json'
 require 'rpc_helper'
 require 'uri'
 
@@ -26,7 +26,7 @@ module GitkitLib
     #
     # @param [String] file file name of the json-format config
     def self.create_from_config_file(file)
-      config = JSON.parse File.open(file, 'rb') { |io| io.read }
+      config = MultiJson.load File.open(file, 'rb') { |io| io.read }
       p12key = File.open(config['serviceAccountPrivateKeyFile'], 'rb') {
           |io| io.read }
       new(
@@ -70,7 +70,7 @@ module GitkitLib
                 [key, OpenSSL::X509::Certificate.new(cert)]}]
           end
           @certificates[key_id].public_key }
-        parsed_token = JWT.decode(token_string, nil, true, &key_finder).first
+        parsed_token, _ = JWT.decode(token_string, nil, true, &key_finder)
         # check expiration time
         if Time.new.to_i > parsed_token['exp']
           return nil, 'token expired'
@@ -212,7 +212,7 @@ module GitkitLib
     end
 
     def failure_msg(msg)
-      {:response_body => {'error' => msg}}.to_json
+      {:response_body => MultiJson.dump({'error' => msg})}
     end
 
     def email_change_response(oob_link, param)
@@ -221,7 +221,7 @@ module GitkitLib
         :newEmail => param['newEmail'],
         :oobLink => oob_link,
         :action => :CHANGE_EMAIL,
-        :response_body => {'success' => true}.to_json
+        :response_body => MultiJson.dump({'success' => true})
       }
     end
 
@@ -230,7 +230,7 @@ module GitkitLib
         :email => param['email'],
         :oobLink => oob_link,
         :action => :RESET_PASSWORD,
-        :response_body => {'success' => true}.to_json
+        :response_body => MultiJson.dump({'success' => true})
       }
     end
   end
