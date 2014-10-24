@@ -13,7 +13,7 @@
 # limitations under the License.
 
 require 'jwt'
-require 'json'
+require 'multi_json'
 require 'faraday'
 require 'gitkit_client'
 require 'openssl'
@@ -137,7 +137,7 @@ module GitkitLib
         headers = {'Content-type' => 'application/x-www-form-urlencoded'}
         response = @connection.post(RpcHelper::TOKEN_ENDPOINT, post_body,
             headers)
-        @access_token = JSON.parse(response.env[:body])['access_token']
+        @access_token = MultiJson.load(response.env[:body])['access_token']
         @token_issued_at = Time.new.to_i
       end
       @access_token
@@ -162,13 +162,13 @@ module GitkitLib
     # authenticated
     # @return <JSON> the Gitkit api response
     def invoke_gitkit_api(method, params, need_service_account=true)
-      post_body = JSON.generate(params)
+      post_body = MultiJson.dump params
       headers = {'Content-type' => 'application/json'}
       if need_service_account
         @connection.authorization :Bearer, fetch_access_token
       end
       response = @connection.post(GITKIT_API_URL + method, post_body, headers)
-      check_gitkit_error JSON.parse(response.env[:body])
+      check_gitkit_error MultiJson.load(response.env[:body])
     end
 
     # Download the Gitkit public certs
