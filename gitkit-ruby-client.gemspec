@@ -14,7 +14,7 @@
 # limitations under the License.
 
 Gem::Specification.new do |s|
-  s.name = "gitkit-ruby-client"
+  s.name = "identity-toolkit-ruby-client"
   s.version = "1.0.1"
 
   s.authors = ["Jin Liu"]
