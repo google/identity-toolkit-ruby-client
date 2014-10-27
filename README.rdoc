@@ -4,7 +4,7 @@ Google Identity Toolkit (Gitkit) ruby client library is for third party sites to
 
 === Installation
 
-  gem install gitkit-ruby-client
+  gem install identity-toolkit-ruby-client
 
 === Examples
 
