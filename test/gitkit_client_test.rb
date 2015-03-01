@@ -95,5 +95,20 @@ class GitkitClientTest < Test::Unit::TestCase
         'http://localhost:1234/widget?mode=resetPassword&oobCode=oob-code',
         oob_result[:oobLink])
   end
+
+  def test_email_verification_link
+    stub = GitkitLib::RpcHelper.any_instance
+    stub.expects(:get_oob_code).returns('oob-code')
+    gitkit_client = GitkitLib::GitkitClient.new(
+        '924226504183.apps.googleusercontent.com',
+        'service_email',
+        Base64.decode64(TestData::P12_KEY),
+        'http://localhost:1234/widget',
+        'server-api-key')
+    oob_link = gitkit_client.get_email_verification_link('user@example.com')
+    assert_equal(
+        'http://localhost:1234/widget?mode=verifyEmail&oobCode=oob-code',
+        oob_link)
+  end
 end
 
