@@ -181,6 +181,19 @@ module GitkitLib
       failure_msg('unknown request type')
     end
 
+    # Get one-time code to verify user email
+    #
+    # @param [String] email end user's email to be verified
+    #
+    # @return [String] the generated link to be send to user's email
+    def get_email_verification_link(email)
+      param = {
+        'email' => email,
+        'requestType' => 'VERIFY_EMAIL'
+      }
+      build_oob_link(param, "verifyEmail")
+    end
+
     def password_reset_request(param, user_ip)
       {
         'email' => param['email'],
