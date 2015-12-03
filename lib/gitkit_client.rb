@@ -31,6 +31,7 @@ module GitkitLib
           |io| io.read }
       new(
           config['clientId'],
+          config['projectId'],
           config['serviceAccountEmail'],
           p12key,
           config['widgetUrl'],
@@ -44,9 +45,13 @@ module GitkitLib
     # @param [String] service_account_key Google service account private p12 key
     # @param [String] widget_url full url to host the Gitkit widget
     # @param [String] server_api_key server-side Google API key
-    def initialize(client_id, service_account_email, service_account_key,
-        widget_url, server_api_key = nil)
+    def initialize(client_id, project_id, service_account_email,
+        service_account_key, widget_url, server_api_key = nil)
       @client_id = client_id
+      @project_id = project_id
+      if @project_id.nil? and @client_id.nil?
+        raise GitkitClientError, 'Missing projectId or clientId in server configuration.'
+      end
       @widget_url = widget_url
       @rpc_helper = RpcHelper.new(service_account_email, service_account_key,
           server_api_key)
@@ -76,10 +81,11 @@ module GitkitLib
           return nil, 'token expired'
         end
         # check audience
-        if parsed_token['aud'] != @client_id
-          return nil, 'audience mismatch'
+        if parsed_token['aud'] == @project_id or parsed_token['aud'] == @client_id
+          GitkitUser.parse_from_api_response parsed_token
+        else
+          return nil, "Gitkit token audience(#{parsed_token['aud']}) doesn't match projectId or clientId in server configuration"
         end
-        GitkitUser.parse_from_api_response parsed_token
       rescue JWT::DecodeError => e
         return nil, e.message
       end
