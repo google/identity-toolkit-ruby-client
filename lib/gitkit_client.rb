@@ -31,11 +31,11 @@ module GitkitLib
           |io| io.read }
       new(
           config['clientId'],
-          config['projectId'],
           config['serviceAccountEmail'],
           p12key,
           config['widgetUrl'],
-          config['serverApiKey'])
+          config['serverApiKey'],
+          config['projectId'])
     end
 
     # Initializes a GitkitClient.
@@ -45,8 +45,9 @@ module GitkitLib
     # @param [String] service_account_key Google service account private p12 key
     # @param [String] widget_url full url to host the Gitkit widget
     # @param [String] server_api_key server-side Google API key
-    def initialize(client_id, project_id, service_account_email,
-        service_account_key, widget_url, server_api_key = nil)
+    # @param [String] project_id Google developer console project id
+    def initialize(client_id, service_account_email, service_account_key,
+        widget_url, server_api_key = nil, project_id = nil)
       @client_id = client_id
       @project_id = project_id
       if @project_id.nil? and @client_id.nil?
