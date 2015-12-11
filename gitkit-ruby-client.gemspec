@@ -15,7 +15,7 @@
 
 Gem::Specification.new do |s|
   s.name = "identity-toolkit-ruby-client"
-  s.version = "1.0.1"
+  s.version = "1.0.2"
 
   s.authors = ["Jin Liu"]
   s.homepage = "https://developers.google.com/identity-toolkit/v3"
