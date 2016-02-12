@@ -264,12 +264,10 @@ module GitkitLib
       user.email = api_response.fetch('email', nil)
       user.user_id = api_response.fetch('user_id',
           api_response.fetch('localId', nil))
-      user.name = api_response.fetch('displayName', nil)
-      user.photo_url = api_response.fetch('photoUrl', nil)
-      user.provider_id = api_response.fetch('provider_id',
-          api_response.fetch('providerId', nil))
-      user.email_verified = api_response.fetch('emailVerified',
-          api_response.fetch('verified', nil))
+      user.name = api_response.fetch('displayName', api_response.fetch('display_name', nil))
+      user.photo_url = api_response.fetch('photoUrl', api_response.fetch('photo_url', nil))
+      user.provider_id = api_response.fetch('provider_id', api_response.fetch('providerId', nil))
+      user.email_verified = api_response.fetch('emailVerified', api_response.fetch('verified', nil))
       user.password_hash = api_response.fetch('passwordHash', nil)
       user.salt = api_response.fetch('salt', nil)
       user.password = api_response.fetch('password', nil)
