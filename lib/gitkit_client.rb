@@ -139,10 +139,11 @@ module GitkitLib
     # @param [String] hash_algorithm password hash algorithm
     # @param [String] hash_key key of the hash algorithm
     # @param [Array<GitkitUser>] accounts user accounts to be uploaded
-    def upload_users(hash_algorithm, hash_key, accounts)
+    # @param [Hash] including options for saltSeparator, rounds, memoryCost
+    def upload_users(hash_algorithm, hash_key, accounts, other_params)
       account_request = accounts.collect { |account| account.to_request }
       @rpc_helper.upload_account hash_algorithm, JWT.base64url_encode(hash_key),
-          account_request
+          account_request, other_params
     end
 
     # Deletes a user account from Gitkit service
