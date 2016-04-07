@@ -4,6 +4,7 @@ require 'mocha/test_unit'
 require 'test/unit'
 require 'test_data'
 
+
 class GitkitClientTest < Test::Unit::TestCase
 
   def setup
@@ -52,10 +53,10 @@ class GitkitClientTest < Test::Unit::TestCase
 
   def test_download_account
     page1 = [
-        {'email' => 'email-1', 'localId' => 'user-1'},
-        {'email' => 'email-2', 'localId' => 'user-2'}]
+        {'email' => 'email-1', 'localId' => 'user-1', 'display_name' => 'name-1'},
+        {'email' => 'email-2', 'localId' => 'user-2', 'display_name' => 'name-2'}]
     page2 = [
-        {'email' => 'email-3', 'localId' => 'user-3'}]
+        {'email' => 'email-3', 'localId' => 'user-3', 'display_name' => 'name-3'}]
     stub = GitkitLib::RpcHelper.any_instance
     stub.expects(:download_account).with(nil, 2).returns(['page2_token', page1])
     stub.expects(:download_account).with('page2_token', 2).returns([nil, page2])
@@ -70,6 +71,7 @@ class GitkitClientTest < Test::Unit::TestCase
     gitkit_client.get_all_users(2) { |account|
       index = index + 1
       assert_equal 'user-' + index.to_s, account.user_id
+      assert_equal 'name-' + index.to_s, account.name
     }
     assert_equal 3, index
   end

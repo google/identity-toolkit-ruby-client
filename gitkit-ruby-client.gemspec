@@ -15,7 +15,7 @@
 
 Gem::Specification.new do |s|
   s.name = "identity-toolkit-ruby-client"
-  s.version = "1.0.2"
+  s.version = "1.0.3"
 
   s.authors = ["Jin Liu"]
   s.homepage = "https://developers.google.com/identity-toolkit/v3"
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.description = 'Google Identity Toolkit Ruby client library'
   s.extra_rdoc_files = ["README.rdoc"]
   s.files = ["lib/gitkit_client.rb", "lib/rpc_helper.rb", "README.rdoc"]
+  s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
