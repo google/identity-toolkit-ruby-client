@@ -100,12 +100,13 @@ module GitkitLib
     # @param <String> hash_algorithm hash algorithm
     # @param <String> hash_key hash key
     # @param <Array<GitkitUser>> accounts account to be uploaded
-    def upload_account(hash_algorithm, hash_key, accounts)
+    # @param [Hash] including options for hashAlgorithm, signerKey, saltSeparator, rounds, memoryCost
+    def upload_account(hash_algorithm, hash_key, accounts, other_params = {})
       param = {
           'hashAlgorithm' => hash_algorithm,
           'signerKey' => hash_key,
           'users' => accounts
-      }
+      }.merge(other_params)
       invoke_gitkit_api('uploadAccount', param)
     end
 
